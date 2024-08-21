@@ -983,9 +983,17 @@ export interface ApiPrivateCategoryPrivateCategory
     webtools: {
       enabled: true;
     };
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
-    title: Attribute.String;
+    title: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     test: Attribute.Relation<
       'api::private-category.private-category',
       'oneToOne',
@@ -1015,6 +1023,12 @@ export interface ApiPrivateCategoryPrivateCategory
     sitemap_exclude: Attribute.Boolean &
       Attribute.Private &
       Attribute.DefaultTo<false>;
+    localizations: Attribute.Relation<
+      'api::private-category.private-category',
+      'oneToMany',
+      'api::private-category.private-category'
+    >;
+    locale: Attribute.String;
   };
 }
 

@@ -6,6 +6,7 @@ import {
   Field,
   FieldLabel,
   FieldError,
+  FieldHint,
 } from '@strapi/design-system';
 import { request } from '@strapi/helper-plugin';
 import { EnabledContentTypes } from '../../types/enabled-contenttypes';
@@ -13,13 +14,11 @@ import { EnabledContentTypes } from '../../types/enabled-contenttypes';
 type Props = {
   selectedLanguages: string[];
   onChange: (selectedLanguages: string[]) => any;
-  error?: any;
 };
 
 const LanguageCheckboxes = ({
   selectedLanguages,
   onChange,
-  error,
 }: Props) => {
   const [languages, setLanguages] = React.useState<EnabledContentTypes>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -41,7 +40,7 @@ const LanguageCheckboxes = ({
   }
 
   return (
-    <Field name="password" error={error as string}>
+    <Field name="password" hint="Leave empty to select all languages.">
       <FieldLabel>Select the language</FieldLabel>
       <Flex direction="column" alignItems="start" gap="1" marginTop="2">
         {languages.map((contentType) => (
@@ -64,6 +63,7 @@ const LanguageCheckboxes = ({
           </Checkbox>
         ))}
         <FieldError />
+        <FieldHint />
       </Flex>
     </Field>
   );

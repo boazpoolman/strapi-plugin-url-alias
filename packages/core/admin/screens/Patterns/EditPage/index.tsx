@@ -273,11 +273,6 @@ const EditPatternPage = () => {
                           <LanguageCheckboxes
                             onChange={(newLanguages) => setFieldValue('languages', newLanguages)}
                             selectedLanguages={values.languages}
-                            error={
-                              errors.languages && touched.languages
-                                ? errors.languages
-                                : null
-                            }
                           />
                         </GridItem>
                       </GridItem>

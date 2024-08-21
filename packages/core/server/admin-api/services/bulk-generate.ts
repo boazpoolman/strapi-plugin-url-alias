@@ -1,6 +1,9 @@
-import { Common } from '@strapi/types';
+import { Common, Attribute } from '@strapi/types';
+// import { Attribute } from '@strapi/strapi';
+import snakeCase from 'lodash/snakeCase';
 import { getPluginService } from '../../util/getPluginService';
 import { GenerationType } from '../../types';
+import { duplicateCheck } from './url-alias';
 
 export interface GenerateParams { types: Common.UID.ContentType[], generationType: GenerationType }
 
@@ -77,27 +80,23 @@ const generateUrlAliases = async (parms: GenerateParams) => {
 
   // Map over all the types sent in the request.
   await Promise.all(types.map(async (type) => {
+    const { collectionName, info } = strapi.contentTypes[type];
+    const { singularName } = info;
+    const newTransaction = await strapi.db.connection.transaction();
+
     if (generationType === 'all') {
       // Delete all the URL aliases for the given type.
-      await getPluginService('url-alias').deleteMany({
-        // @ts-ignore
-        locale: 'all',
-        filters: {
-          contenttype: type,
-        },
-      });
+      await newTransaction('wt_url_alias')
+        .where('contenttype', type)
+        .delete();
     }
 
     if (generationType === 'only_generated') {
-      // Delete all the auto generated URL aliases of the given type.
-      await getPluginService('url-alias').deleteMany({
-        // @ts-ignore
-        locale: 'all',
-        filters: {
-          contenttype: type,
-          generated: true,
-        },
-      });
+      // Delete all the URL aliases for the given type.
+      await newTransaction('wt_url_alias')
+        .where('contenttype', type)
+        .andWhere('generated', true)
+        .delete();
     }
 
     let relations: string[] = [];
@@ -115,16 +114,10 @@ const generateUrlAliases = async (parms: GenerateParams) => {
     }));
 
     // Query all the entities of the type that do not have a corresponding URL alias.
-    const entities = await strapi.entityService.findMany(type, {
-      filters: {
-        url_alias: null,
-      },
-      locale: 'all',
-      // @ts-ignore
-      populate: {
-        ...relations.reduce((obj, key) => ({ ...obj, [key]: {} }), {}),
-      },
-    });
+    const entities = await newTransaction(collectionName)
+      .leftJoin(`${collectionName}_url_alias_links`, `${collectionName}.id`, `${collectionName}_url_alias_links.${snakeCase(singularName)}_id`)
+      .where(`${collectionName}_url_alias_links`, null)
+      .select('*') as Attribute.GetValues<Common.UID.ContentType, Attribute.GetNonPopulatableKeys<Common.UID.ContentType>>[];
 
     /**
      * @todo
@@ -135,32 +128,35 @@ const generateUrlAliases = async (parms: GenerateParams) => {
      */
     // For all those entities we will create a URL alias and connect it to the entity.
     // eslint-disable-next-line no-restricted-syntax
-    for (const entity of entities) {
+    await Promise.all(entities.map(async (entity) => {
       // @ts-ignore
       // eslint-disable-next-line no-await-in-loop, @typescript-eslint/no-unsafe-argument
       const urlPattern = await getPluginService('urlPatternService').findByUid(type, entity.locale);
       const generatedPath = getPluginService('urlPatternService').resolvePattern(type, entity, urlPattern);
 
       // eslint-disable-next-line no-await-in-loop
-      const newUrlAlias = await getPluginService('urlAliasService').create({
-        url_path: generatedPath,
+      const urlPath = await duplicateCheck(generatedPath);
+
+      const newUrlAlias = await newTransaction('wt_url_alias').insert({
         generated: true,
         contenttype: type,
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         locale: entity.locale,
-      });
+        url_path: urlPath,
+      }, '*') as unknown as Attribute.GetValues<Common.UID.ContentType, Attribute.GetNonPopulatableKeys<Common.UID.ContentType>>[];
 
       // eslint-disable-next-line no-await-in-loop
-      await strapi.entityService.update(type, entity.id, {
-        data: {
-          // @ts-ignore
-          url_alias: newUrlAlias.id,
-        },
-      });
+      await newTransaction(`${collectionName}_url_alias_links`)
+        .insert({
+          [`${snakeCase(singularName)}_id`]: entity.id,
+          url_alias_id: newUrlAlias[0].id,
+        });
 
       generatedCount += 1;
-    }
+    }));
+
+    await newTransaction.commit();
   }));
 
   return generatedCount;

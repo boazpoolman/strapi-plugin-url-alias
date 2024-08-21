@@ -6,7 +6,7 @@ import { getPluginService } from '../../util/getPluginService';
 /**
  * Finds a path from the original path that is unique
  */
-const duplicateCheck = async (
+export const duplicateCheck = async (
   originalPath: string,
   ignoreId?: Entity.ID,
   ext: number = -1,

@@ -54,11 +54,21 @@ export default () => ({
       filters: {
         contenttype: uid,
       },
+      fields: ['pattern', 'languages'],
     });
 
     if (langcode) {
-      patterns = patterns
-        .filter((pattern) => (pattern.languages as string).includes(langcode));
+      const allPatterns = patterns;
+
+      patterns = allPatterns
+        .filter((pattern) => (pattern.languages as any[]).includes(langcode));
+
+      // If no pattern is found for the given language, check if there is
+      // any pattern that is not language specific. We should use that as a fallback.
+      if (patterns.length === 0) {
+        patterns = allPatterns
+          .filter((pattern) => (pattern.languages as any[]).length === 0);
+      }
     }
 
     if (!patterns[0]) {
