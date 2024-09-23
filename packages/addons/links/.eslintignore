@@ -1,0 +1,13 @@
+**/node_modules
+**/playground
+**/public
+**/build
+**/dist
+**/bundle
+**/config
+**/scripts
+**/docs
+**/server/types/generated
+**/__tests__
+strapi-admin.js
+strapi-server.js

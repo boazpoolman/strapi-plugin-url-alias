@@ -1,0 +1,14 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./",
+    "outDir": "../../../playground/src/plugins/webtools-addon-links",
+  },
+  "include": [
+    "./server/**/*",
+    "./admin/**/*",
+    "./types/**/*",
+    "./strapi-server.*",
+    "./strapi-admin.*"
+  ],
+}

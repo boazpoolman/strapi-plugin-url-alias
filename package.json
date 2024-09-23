@@ -6,14 +6,15 @@
     "packages/addons/*"
   ],
   "scripts": {
-    "postinstall": "yarn playground:install",
     "build": "turbo run build",
     "develop": "FORCE_COLOR=1 turbo run watch:link",
     "eslint": "turbo run eslint",
     "eslint:fix": "turbo run eslint:fix",
     "release:publish": "turbo run build && changeset publish",
     "release:prepare": "changeset version && YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install",
-    "playground:install": "cd playground && yarn dlx yalc add --link @pluginpal/webtools-helper-plugin @pluginpal/webtools-core @pluginpal/webtools-addon-sitemap && yarn install",
+    "playground:install": "yarn playground:yalc-add-link && cd playground && yarn install",
+    "playground:yalc-add": "cd playground && yarn dlx yalc add @pluginpal/webtools-helper-plugin @pluginpal/webtools-core @pluginpal/webtools-addon-sitemap @pluginpal/webtools-addon-links",
+    "playground:yalc-add-link": "cd playground && yarn dlx yalc add --link @pluginpal/webtools-helper-plugin @pluginpal/webtools-core @pluginpal/webtools-addon-sitemap @pluginpal/webtools-addon-links",
     "playground:build": "cd playground && yarn build",
     "playground:start": "cd playground && yarn start",
     "playground:develop": "rm -rf playground/node_modules/.strapi/ && cd playground && yarn develop --watch-admin --bundler=vite",
@@ -41,10 +42,5 @@
   "engines": {
     "node": ">=14.0.0"
   },
-  "packageManager": "yarn@4.0.2",
-  "dependencies": {
-    "@pluginpal/webtools-addon-sitemap": "link:.yalc/@pluginpal/webtools-addon-sitemap",
-    "@pluginpal/webtools-core": "link:.yalc/@pluginpal/webtools-core",
-    "@pluginpal/webtools-helper-plugin": "link:.yalc/@pluginpal/webtools-helper-plugin"
-  }
+  "packageManager": "yarn@4.0.2"
 }

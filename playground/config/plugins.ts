@@ -10,6 +10,10 @@ module.exports = {
     enabled: true,
   },
 
+  'webtools-addon-links': {
+    enabled: true,
+  },
+
   // 'webtools-addon-redirects': {
   //   enabled: true,
   // },

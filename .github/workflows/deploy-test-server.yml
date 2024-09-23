@@ -43,8 +43,8 @@ jobs:
       - name: Build the packages
         run: yarn run build
 
-      - name: Install de playground dependencies
-        run: yarn playground:install
+      - name: Add yalc packages to playground
+        run: yarn playground:yalc-add
 
       - name: Build a Docker image of the playground
         run: |

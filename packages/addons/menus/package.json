@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@pluginpal/webtools-helper-plugin": "1.0.0-beta.4",
-    "@strapi/strapi": "^4"
+    "@strapi/strapi": "4.20.3"
   },
   "devDependencies": {
     "react": "^18.0.0",

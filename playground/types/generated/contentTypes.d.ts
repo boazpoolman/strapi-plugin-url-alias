@@ -1028,7 +1028,6 @@ export interface ApiTestTest extends Schema.CollectionType {
   };
   options: {
     draftAndPublish: true;
-    populateCreatorFields: true;
   };
   pluginOptions: {
     webtools: {
@@ -1055,11 +1054,20 @@ export interface ApiTestTest extends Schema.CollectionType {
       'oneToOne',
       'api::private-category.private-category'
     >;
+    Button: Attribute.String &
+      Attribute.CustomField<'plugin::webtools-addon-links.link'> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<'api::test.test', 'oneToOne', 'admin::user'>;
-    updatedBy: Attribute.Relation<'api::test.test', 'oneToOne', 'admin::user'>;
+    createdBy: Attribute.Relation<'api::test.test', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::test.test', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
     url_alias: Attribute.Relation<
       'api::test.test',
       'oneToOne',

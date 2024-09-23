@@ -8,8 +8,7 @@
     "description": ""
   },
   "options": {
-    "draftAndPublish": true,
-    "populateCreatorFields": true
+    "draftAndPublish": true
   },
   "pluginOptions": {
     "webtools": {
@@ -39,6 +38,15 @@
       "relation": "oneToOne",
       "target": "api::private-category.private-category",
       "inversedBy": "test"
+    },
+    "Button": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "customField",
+      "customField": "plugin::webtools-addon-links.link"
     }
   }
 }
