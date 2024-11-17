@@ -1,1 +1,0 @@
-../../../../packages/addons/menus/strapi-server.js

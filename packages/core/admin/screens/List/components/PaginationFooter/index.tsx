@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Flex } from '@strapi/design-system';
-import { PaginationURLQuery, PageSizeURLQuery } from '@strapi/helper-plugin';
+import { Pagination as StrapiPagination } from '@strapi/strapi/admin';
 import type { Pagination } from '../..';
 
 type Props = {
@@ -11,8 +11,10 @@ const PaginationFooter = ({ pagination }: Props) => {
   return (
     <Box paddingTop={4}>
       <Flex alignItems="flex-end" justifyContent="space-between">
-        <PageSizeURLQuery trackedEvent="willChangeNumberOfEntriesPerPage" />
-        <PaginationURLQuery pagination={pagination} />
+        <StrapiPagination.Root>
+          <StrapiPagination.PageSize />
+          <StrapiPagination.Links />
+        </StrapiPagination.Root>
       </Flex>
     </Box>
   );

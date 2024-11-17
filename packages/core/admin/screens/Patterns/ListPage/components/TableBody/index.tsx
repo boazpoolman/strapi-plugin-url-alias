@@ -3,9 +3,7 @@ import {
   IconButton, Typography, Flex, Tbody, Tr, Td,
 } from '@strapi/design-system';
 import { Pencil, Trash } from '@strapi/icons';
-import {
-  onRowClick, stopPropagation, request, useNotification,
-} from '@strapi/helper-plugin';
+import { getFetchClient, useNotification } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 
@@ -20,19 +18,18 @@ const TableBody: React.FC<Props> = ({ patterns }) => {
   const [statePatterns, setStatePatterns] = useState(patterns);
   const { formatMessage } = useIntl();
   const { push } = useHistory();
-  const toggleNotification = useNotification();
+  const { toggleNotification } = useNotification();
+  const { get } = getFetchClient();
 
   const handleClickDelete = (id: number) => {
-    request(`/webtools/url-pattern/delete/${id}`, {
-      method: 'GET',
-    })
+    get(`/webtools/url-pattern/delete/${id}`)
       .then(() => {
         const newPatterns = statePatterns.filter((pattern) => pattern.id !== id);
         setStatePatterns(newPatterns);
-        toggleNotification({ type: 'success', message: { id: 'webtools.settings.success.delete' } });
+        toggleNotification({ type: 'success', message: formatMessage({ id: 'webtools.settings.success.delete' }) });
       })
       .catch(() => {
-        toggleNotification({ type: 'warning', message: { id: 'notification.error' } });
+        toggleNotification({ type: 'warning', message: formatMessage({ id: 'notification.error' }) });
       });
   };
 
@@ -43,7 +40,7 @@ const TableBody: React.FC<Props> = ({ patterns }) => {
   return (
     <Tbody>
       {statePatterns.map((pattern) => (
-        <Tr key={pattern.label} {...onRowClick({ fn: () => handleClickEdit(pattern.id) })}>
+        <Tr key={pattern.label} onClick={() => handleClickEdit(pattern.id)}>
           <Td width="20%">
             <Typography>{pattern.label}</Typography>
           </Td>
@@ -51,25 +48,25 @@ const TableBody: React.FC<Props> = ({ patterns }) => {
             <Typography>{pattern.pattern}</Typography>
           </Td>
           <Td>
-            <Flex justifyContent="end" {...stopPropagation}>
+            <Flex justifyContent="end">
               <IconButton
                 onClick={() => handleClickEdit(pattern.id)}
-                noBorder
-                icon={<Pencil />}
                 label={formatMessage(
                   { id: 'webtools.settings.page.patterns.table.actions.edit', defaultMessage: 'Edit {target}' },
                   { target: `${pattern.label}` },
                 )}
-              />
+              >
+                <Pencil />
+              </IconButton>
               <IconButton
                 onClick={() => handleClickDelete(pattern.id)}
-                noBorder
-                icon={<Trash />}
                 label={formatMessage(
                   { id: 'webtools.settings.page.patterns.table.actions.delete', defaultMessage: 'Delete {target}' },
                   { target: `${pattern.label}` },
                 )}
-              />
+              >
+                <Trash />
+              </IconButton>
             </Flex>
           </Td>
         </Tr>

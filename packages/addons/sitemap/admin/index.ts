@@ -1,10 +1,10 @@
-import { prefixPluginTranslations } from '@strapi/helper-plugin';
 import { AdminApp } from '@pluginpal/webtools-helper-plugin';
 import pluginPkg from '../package.json';
 import pluginId from './helpers/pluginId';
 import EditView from './components/EditView';
 import AdminRoute from './components/AdminRoute';
 import NavLink from './components/NavLink';
+import getTranslation from './helpers/getTranslation';
 
 const pluginDescription = pluginPkg.strapi.description || pluginPkg.description;
 const { name } = pluginPkg.strapi;
@@ -20,7 +20,7 @@ export default {
     });
   },
   bootstrap(app: AdminApp) {
-    app.injectContentManagerComponent('editView', 'right-links', {
+    app.getPlugin('content-manager').injectComponent('editView', 'right-links', {
       name: 'sitemap-edit-view',
       Component: EditView,
     });
@@ -35,16 +35,15 @@ export default {
       Component: AdminRoute,
     });
   },
-  async registerTrads({ locales }: { locales: string[] }) {
-    const importedTrads = await Promise.all(
-      locales.map((locale) => {
-        return import(
-          /* webpackChunkName: "url-alias-translation-[request]" */ `./translations/${locale}.json`
-        )
+  async registerTrads(app: any) {
+    const { locales } = app;
+
+    const importedTranslations = await Promise.all(
+      (locales as string[]).map((locale) => {
+        return import(`./translations/${locale}.json`)
           .then(({ default: data }) => {
             return {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-              data: prefixPluginTranslations(data, pluginId),
+              data: getTranslation(data),
               locale,
             };
           })
@@ -57,6 +56,6 @@ export default {
       }),
     );
 
-    return Promise.resolve(importedTrads);
+    return importedTranslations;
   },
 };

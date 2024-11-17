@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Select, Option } from '@strapi/design-system';
+import { Field, SingleSelect, SingleSelectOption } from '@strapi/design-system';
 import { FormikErrors } from 'formik';
 
 type ListItem = {
@@ -33,21 +33,29 @@ const SelectComponent: FC<Props> = ({
   }
 
   return (
-    <Select
-      label={label}
-      name={name}
-      placeholder={placeholder}
+    <Field.Root
       hint={hint}
+      // @ts-ignore
       error={error}
-      value={value}
-      onChange={(v: any) => setFieldValue(name, v)}
     >
-      {list.map((item) => (
-        <Option key={item.uid} value={item.uid}>
-          {item.name}
-        </Option>
-      ))}
-    </Select>
+      <Field.Label>
+        {label}
+      </Field.Label>
+      <SingleSelect
+        name={name}
+        placeholder={placeholder}
+        value={value}
+        onChange={(v: any) => setFieldValue(name, v)}
+      >
+        {list.map((item) => (
+          <SingleSelectOption key={item.uid} value={item.uid}>
+            {item.name}
+          </SingleSelectOption>
+        ))}
+      </SingleSelect>
+      <Field.Hint />
+      <Field.Error />
+    </Field.Root>
   );
 };
 

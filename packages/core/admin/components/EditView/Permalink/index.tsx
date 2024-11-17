@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useFetchClient } from '@strapi/helper-plugin';
+import { getFetchClient } from '@strapi/strapi/admin';
+
 import { Config } from '../../../../server/admin-api/config';
 
 import CopyLinkButton from '../../CopyLinkButton';
@@ -10,10 +11,10 @@ interface Props {
 
 const EditViewRightLinks: React.FC<Props> = ({ path }) => {
   const [url, setUrl] = useState<string>();
-  const fetchClient = useFetchClient();
+  const { get } = getFetchClient();
 
   useEffect(() => {
-    fetchClient.get<Config>('/webtools/info/config')
+    get<Config>('/webtools/info/config')
       .then((response) => {
         const configData = response.data;
         setUrl(configData.website_url);
@@ -21,7 +22,7 @@ const EditViewRightLinks: React.FC<Props> = ({ path }) => {
       .catch((error) => {
         console.error('Failed to fetch config:', error);
       });
-  }, [fetchClient]);
+  }, [get]);
 
   if (!url) return null;
 

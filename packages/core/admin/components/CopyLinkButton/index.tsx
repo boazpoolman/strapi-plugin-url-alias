@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { useNotification } from '@strapi/helper-plugin';
+import { useNotification } from '@strapi/strapi/admin';
 import { LinkButton } from '@strapi/design-system';
 import { Link as LinkIcon } from '@strapi/icons';
 import getTrad from '../../helpers/getTrad';
@@ -13,7 +13,7 @@ interface Props {
 
 const CopyLinkButton: React.FC<Props> = ({ url }) => {
   const { formatMessage } = useIntl();
-  const toggleNotification = useNotification();
+  const { toggleNotification } = useNotification();
 
   return (
     <CopyToClipboard
@@ -21,10 +21,10 @@ const CopyLinkButton: React.FC<Props> = ({ url }) => {
       onCopy={() => {
         toggleNotification({
           type: 'success',
-          message: {
+          message: formatMessage({
             id: getTrad('notification.success.permalink_copied'),
             defaultMessage: 'Permalink copied to the clipboard',
-          },
+          }),
         });
       }}
     >
@@ -33,7 +33,6 @@ const CopyLinkButton: React.FC<Props> = ({ url }) => {
         startIcon={<LinkIcon />}
         variant="secondary"
         style={{ width: '100%' }}
-        to={null}
       >
         { formatMessage({
           id: getTrad('settings.button.copy_permalink'),

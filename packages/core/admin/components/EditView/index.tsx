@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { SidebarModal } from '@pluginpal/webtools-helper-plugin';
-import { useCMEditViewDataManager, CheckPermissions } from '@strapi/helper-plugin';
+import { unstable_useContentManagerContext, Page } from '@strapi/strapi/admin';
 import getTrad from '../../helpers/getTrad';
 import EditForm from '../EditForm';
 import Permalink from './Permalink';
@@ -13,15 +13,19 @@ import pluginPermissions from '../../permissions';
 const EditView = () => {
   const { formatMessage } = useIntl();
   const {
-    allLayoutData,
-    modifiedData,
-    initialData,
-    onChange,
+    contentType,
+    form,
     slug,
-  } = useCMEditViewDataManager();
+  } = unstable_useContentManagerContext();
+
+  const {
+    values,
+    initialValues,
+    onChange,
+  } = form;
 
 
-  const modifiedDataUrlAliases = modifiedData.url_alias as UrlAliasEntity[];
+  const modifiedDataUrlAliases = values.url_alias as UrlAliasEntity[];
   const i18nLang = new URLSearchParams(window.location.search).get('plugins[i18n][locale]');
 
   useEffect(() => {
@@ -42,18 +46,18 @@ const EditView = () => {
     // If the URL aliases have changed, update the form data
     // We fire the onChange here because we don't want unnecessary re-renders
     if (JSON.stringify(updatedUrlAliases) !== JSON.stringify(modifiedDataUrlAliases)) {
-      onChange({ target: { name: 'url_alias', value: updatedUrlAliases, type: 'array' } });
+      onChange('url_alias', updatedUrlAliases);
     }
   }, [modifiedDataUrlAliases, onChange, i18nLang]);
 
   const { createUrlAlias } = useCreateUrlAlias();
   const { updateUrlAliases } = useUpdateUrlAlias();
 
-  if (!allLayoutData.contentType) return null;
+  if (!contentType) return null;
 
-  if (!isContentTypeEnabled(allLayoutData.contentType)) return null;
-  const modifiedUrlAliases = modifiedData.url_alias as UrlAliasEntity[];
-  const initialUrlAliases = initialData.url_alias as UrlAliasEntity[];
+  if (!isContentTypeEnabled(contentType)) return null;
+  const modifiedUrlAliases = values.url_alias as UrlAliasEntity[];
+  const initialUrlAliases = initialValues.url_alias as UrlAliasEntity[];
 
   const onSubmit = async () => {
     if (!initialUrlAliases || initialUrlAliases?.length === 0) {
@@ -62,7 +66,7 @@ const EditView = () => {
         modifiedUrlAliases.map(async (alias) => (await createUrlAlias(alias, slug)).data),
       );
 
-      onChange({ target: { name: 'url_alias', value: newAliases, type: 'array' } });
+      onChange('url_alias', newAliases);
     } else {
       // Update existing URL aliases
       await Promise.all(
@@ -72,7 +76,7 @@ const EditView = () => {
   };
 
   return (
-    <CheckPermissions permissions={pluginPermissions['edit-view.sidebar']}>
+    <Page.Protect permissions={pluginPermissions['edit-view.sidebar']}>
       <SidebarModal
         label={formatMessage({
           id: getTrad('plugin.name'),
@@ -81,11 +85,11 @@ const EditView = () => {
         onSubmit={onSubmit}
         onCancel={() => {
           if (modifiedUrlAliases?.length > 0) {
-            onChange({ target: { name: 'url_alias', value: modifiedUrlAliases, type: 'array' } });
+            onChange('url_alias', modifiedUrlAliases);
           } else if (initialUrlAliases?.length > 0) {
-            onChange({ target: { name: 'url_alias', value: initialUrlAliases, type: 'array' } });
+            onChange('url_alias', initialUrlAliases);
           } else {
-            onChange({ target: { name: 'url_alias', value: null, type: 'array' } });
+            onChange('url_alias', null);
           }
         }}
       >
@@ -94,7 +98,7 @@ const EditView = () => {
       <Permalink
         path={modifiedUrlAliases?.length > 0 ? modifiedUrlAliases[0].url_path : ''}
       />
-    </CheckPermissions>
+    </Page.Protect>
   );
 };
 

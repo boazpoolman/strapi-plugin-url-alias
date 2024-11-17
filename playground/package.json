@@ -1,38 +1,41 @@
 {
-  "name": "playground",
-  "private": true,
+  "name": "playground-5",
   "version": "0.1.0",
+  "private": true,
   "description": "A Strapi application",
   "scripts": {
+    "build": "strapi build",
+    "deploy": "strapi deploy",
     "develop": "strapi develop",
     "start": "strapi start",
-    "build": "strapi build",
     "strapi": "strapi"
   },
   "dependencies": {
     "@pluginpal/webtools-addon-sitemap": "link:.yalc/@pluginpal/webtools-addon-sitemap",
     "@pluginpal/webtools-core": "link:.yalc/@pluginpal/webtools-core",
     "@pluginpal/webtools-helper-plugin": "link:.yalc/@pluginpal/webtools-helper-plugin",
-    "@strapi/plugin-i18n": "^4.25.8",
-    "@strapi/plugin-users-permissions": "^4.25.8",
-    "@strapi/strapi": "^4.25.8",
-    "better-sqlite3": "^9.4.0",
-    "pg": "^8.10.0",
+    "@strapi/plugin-cloud": "5.3.0",
+    "@strapi/plugin-users-permissions": "5.3.0",
+    "@strapi/strapi": "5.3.0",
+    "better-sqlite3": "11.3.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "react-is": "^18.2.0",
-    "react-router-dom": "^5.2.0",
-    "styled-components": "5.3.3"
+    "react-router-dom": "^6.0.0",
+    "styled-components": "^6.0.0"
   },
-  "author": {
-    "name": "A Strapi developer"
-  },
-  "strapi": {
-    "uuid": "a9ceffb9-4ec4-4283-b458-b6cda1760641"
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/pg": "^8",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "pg": "^8.13.1",
+    "typescript": "^5"
   },
   "engines": {
-    "node": ">=18.x.x <=20.x.x",
+    "node": ">=18.0.0 <=22.x.x",
     "npm": ">=6.0.0"
   },
-  "license": "MIT"
+  "strapi": {
+    "uuid": "90b22b41-262b-40ae-9b68-3a3e507df1b9"
+  }
 }

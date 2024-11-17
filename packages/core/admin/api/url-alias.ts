@@ -1,10 +1,11 @@
-import { useFetchClient } from '@strapi/helper-plugin';
+import { getFetchClient } from '@strapi/strapi/admin';
+
 import { UrlAliasEntity } from '../types/url-aliases';
 
 export const useCreateUrlAlias = () => {
-  const { post } = useFetchClient();
+  const { post } = getFetchClient();
 
-  const createUrlAlias = async (body: { id: number }, slug: string) => {
+  const createUrlAlias = (body: { id: number }, slug: string) => {
     return post<UrlAliasEntity>('/webtools/url-alias/create', {
       data: {
         ...body,
@@ -17,8 +18,8 @@ export const useCreateUrlAlias = () => {
 };
 
 export const useUpdateUrlAlias = () => {
-  const { put } = useFetchClient();
-  const updateUrlAliases = async (body: { id: number }, slug: string) => {
+  const { put } = getFetchClient();
+  const updateUrlAliases = (body: { id: number }, slug: string) => {
     return put<UrlAliasEntity>(`/webtools/url-alias/update/${body.id}`, {
       data: {
         ...body,
@@ -32,9 +33,9 @@ export const useUpdateUrlAlias = () => {
 
 
 export const useDeleteUrlAlias = () => {
-  const { post } = useFetchClient();
+  const { post } = getFetchClient();
 
-  const deleteUrlAlias = async (body: { id: number }) => {
+  const deleteUrlAlias = (body: { id: number }) => {
     return post(`/webtools/url-alias/delete/${body.id}`);
   };
 

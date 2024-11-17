@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import {
-  ModalLayout,
-  ModalBody,
-  ModalHeader,
-  ModalFooter,
+  Modal,
   Typography,
   Button,
 } from '@strapi/design-system';
@@ -37,35 +34,34 @@ const SidebarModal: React.FC<Props> = ({
 
   return (
     <Sidebar>
-      <Sidebar.ActionButton
-        label={label}
-        onClick={() => setOpened(!opened)}
-        iconProps={{
-          transform: !opened ? 'rotate(90deg)' : 'rotate(-90deg)',
-        }}
-      />
-      {opened && (
-        <ModalLayout onClose={onClose} labelledBy="title">
-          <ModalHeader>
-            <Typography fontWeight="bold" textColor="neutral800" as="h2" id="title">
+      <Modal.Root>
+        <Modal.Trigger>
+          <Sidebar.ActionButton
+            label={label}
+            iconProps={{
+              transform: !opened ? 'rotate(90deg)' : 'rotate(-90deg)',
+            }}
+          />
+        </Modal.Trigger>
+        <Modal.Content>
+          <Modal.Header>
+            <Typography fontWeight="bold" textColor="neutral800" id="title">
               {label}
             </Typography>
-          </ModalHeader>
-          <ModalBody>
+          </Modal.Header>
+          <Modal.Body>
             {children}
-          </ModalBody>
-          <ModalFooter
-            startActions={(
+          </Modal.Body>
+          <Modal.Footer>
+            <Modal.Close>
               <Button onClick={onClose} variant="tertiary">
                 Cancel
               </Button>
-            )}
-            endActions={(
-              <Button onClick={onSave}>Save</Button>
-            )}
-          />
-        </ModalLayout>
-      )}
+            </Modal.Close>
+            <Button onClick={onSave}>Save</Button>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal.Root>
     </Sidebar>
   );
 };

@@ -12,11 +12,7 @@ import {
 } from '@strapi/design-system';
 import { Filter } from '@strapi/icons';
 
-import {
-  FilterListURLQuery,
-  FilterPopoverURLQuery,
-  SearchURLQuery,
-} from '@strapi/helper-plugin';
+import { Filters as StrapiFilters, SearchInput } from '@strapi/strapi/admin';
 import FilterInput from './FilterInput';
 import { EnabledContentTypes } from '../../../../types/enabled-contenttypes';
 
@@ -38,7 +34,7 @@ const Filters = ({ contentTypes }: Props) => {
         metadatas: {
           label: 'Content-Type',
           // eslint-disable-next-line react/no-unstable-nested-components
-          customInput: (props) => <FilterInput contentTypes={contentTypes} {...props} />,
+          customInput: (props: any) => <FilterInput contentTypes={contentTypes} {...props} />,
         },
         fieldSchema: {
           type: 'string',
@@ -52,44 +48,44 @@ const Filters = ({ contentTypes }: Props) => {
 
 
   return (
-    <Flex gap="1" marginBottom="6">
-      <SearchURLQuery
-        label={formatMessage({
-          id: 'webtools.settings.page.list.filters.label',
-          defaultMessage: 'Search',
-        })}
-        placeholder={formatMessage({
-          id: 'webtools.settings.page.list.filters.placeholder',
-          defaultMessage: 'Search...',
-        })}
-        trackedEvent="didSearch"
-      />
-      <Box paddingTop={1} paddingBottom={1}>
-        <Button
-          variant="tertiary"
-          ref={buttonRef}
-          startIcon={<Filter />}
-          onClick={() => setIsVisible((prev) => !prev)}
-          size="S"
-        >
-          {formatMessage({
-            id: 'webtools.settings.button.filters',
-            defaultMessage: 'Filters',
+    <StrapiFilters.Root>
+      <Flex gap="1" marginBottom="6">
+        <SearchInput
+          label={formatMessage({
+            id: 'webtools.settings.page.list.filters.label',
+            defaultMessage: 'Search',
           })}
-        </Button>
-        {isVisible && (
-          <FilterPopoverURLQuery
-            displayedFilters={filters}
-            isVisible={isVisible}
-            onToggle={() => setIsVisible((prev) => !prev)}
-            source={buttonRef}
-          />
-        )}
-      </Box>
-      <FilterListURLQuery
-        filtersSchema={filters}
-      />
-    </Flex>
+          placeholder={formatMessage({
+            id: 'webtools.settings.page.list.filters.placeholder',
+            defaultMessage: 'Search...',
+          })}
+          trackedEvent="didSearch"
+        />
+        <Box paddingTop={1} paddingBottom={1}>
+          <Button
+            variant="tertiary"
+            ref={buttonRef}
+            startIcon={<Filter />}
+            onClick={() => setIsVisible((prev) => !prev)}
+            size="S"
+          >
+            {formatMessage({
+              id: 'webtools.settings.button.filters',
+              defaultMessage: 'Filters',
+            })}
+          </Button>
+          {isVisible && (
+            <StrapiFilters.Popover />
+            // displayedFilters={filters}
+            // isVisible={isVisible}
+            // onToggle={() => setIsVisible((prev) => !prev)}
+            // source={buttonRef}
+          )}
+        </Box>
+        <StrapiFilters.List />
+        {/* filtersSchema={filters} */}
+      </Flex>
+    </StrapiFilters.Root>
   );
 };
 

@@ -6,7 +6,7 @@ import {
 
 const NavLink = () => {
   return (
-    <SubNavLink to="/plugins/webtools/sitemap" active key="test">
+    <SubNavLink href="/plugins/webtools/sitemap" active key="test">
       Sitemap
     </SubNavLink>
   );

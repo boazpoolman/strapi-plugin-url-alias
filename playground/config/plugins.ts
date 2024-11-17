@@ -2,8 +2,8 @@ module.exports = {
   webtools: {
     enabled: true,
     config: {
-      website_url: 'https://www.pluginpal.io'
-    }
+      website_url: 'https://www.pluginpal.io',
+    },
   },
 
   'webtools-addon-sitemap': {

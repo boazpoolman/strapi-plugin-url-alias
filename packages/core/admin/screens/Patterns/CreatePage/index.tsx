@@ -9,19 +9,16 @@ import {
 import { useHistory } from 'react-router-dom';
 
 import {
-  ContentLayout,
-  HeaderLayout,
   Box,
   Link,
   Button,
-  Stack,
+  Flex,
   Typography,
-  GridItem,
   Grid,
   Loader,
 } from '@strapi/design-system';
+import { useNotification, getFetchClient, Layouts } from '@strapi/strapi/admin';
 import { ArrowLeft, Check } from '@strapi/icons';
-import { useNotification, useFetchClient } from '@strapi/helper-plugin';
 import schema from './utils/schema';
 import { ErrorResponse } from '../../../types/error-response';
 import pluginId from '../../../helpers/pluginId';
@@ -36,11 +33,11 @@ import HiddenLocalizedField from '../../../components/HiddenLocalizedField';
 
 const CreatePatternPage = () => {
   const { push } = useHistory();
-  const toggleNotification = useNotification();
+  const { toggleNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const [contentTypes, setContentTypes] = useState<EnabledContentTypes>([]);
   const { formatMessage } = useIntl();
-  const { get, post } = useFetchClient();
+  const { get, post } = getFetchClient();
 
   useEffect(() => {
     setLoading(true);
@@ -68,7 +65,7 @@ const CreatePatternPage = () => {
       push(`/plugins/${pluginId}/patterns`);
       toggleNotification({
         type: 'success',
-        message: { id: 'webtools.settings.success.create' },
+        message: formatMessage({ id: 'webtools.settings.success.create' }),
       });
       setSubmitting(false);
     } catch (err) {
@@ -78,7 +75,7 @@ const CreatePatternPage = () => {
       } else {
         toggleNotification({
           type: 'warning',
-          message: { id: 'notification.error' },
+          message: formatMessage({ id: 'notification.error' }),
         });
       }
       setSubmitting(false);
@@ -126,6 +123,7 @@ const CreatePatternPage = () => {
       initialValues={{
         label: '', pattern: '', contenttype: '', languages: [], localized: false,
       }}
+      // @ts-ignore
       onSubmit={handleCreateSubmit}
       validationSchema={schema}
       validate={validatePattern}
@@ -138,8 +136,8 @@ const CreatePatternPage = () => {
         isSubmitting,
         setFieldValue,
       }) => (
-        <Form noValidate onSubmit={handleSubmit} placeholder={null}>
-          <HeaderLayout
+        <Form noValidate onSubmit={handleSubmit}>
+          <Layouts.Header
             title={formatMessage({
               id: 'webtools.settings.page.patterns.create.title',
               defaultMessage: 'Add new pattern',
@@ -148,9 +146,8 @@ const CreatePatternPage = () => {
               id: 'webtools.settings.page.patterns.create.description',
               defaultMessage: 'Add a pattern for automatic URL alias generation.',
             })}
-            as="h2"
             navigationAction={(
-              <Link startIcon={<ArrowLeft />} to={`/plugins/${pluginId}/patterns`}>
+              <Link startIcon={<ArrowLeft />} href={`/plugins/${pluginId}/patterns`}>
                 {formatMessage({
                   id: 'global.back',
                   defaultMessage: 'Back',
@@ -166,8 +163,8 @@ const CreatePatternPage = () => {
               </Button>
             )}
           />
-          <ContentLayout>
-            <Stack spacing={7}>
+          <Layouts.Content>
+            <Flex>
               <Box
                 background="neutral0"
                 hasRadius
@@ -177,15 +174,15 @@ const CreatePatternPage = () => {
                 paddingLeft={7}
                 paddingRight={7}
               >
-                <Stack spacing={4}>
-                  <Typography variant="delta" as="h2">
+                <Flex>
+                  <Typography variant="delta">
                     {formatMessage({
                       id: 'webtools.settings.page.patterns.create.subtitle',
                       defaultMessage: 'Pattern details',
                     })}
                   </Typography>
-                  <Grid gap={4}>
-                    <GridItem col={6}>
+                  <Grid.Root gap={4}>
+                    <Grid.Item col={6}>
                       <Select
                         name="contenttype"
                         list={contentTypes}
@@ -201,39 +198,41 @@ const CreatePatternPage = () => {
                             : null
                         }
                       />
-                    </GridItem>
-                    <GridItem col={12} />
-                    <GridItem col={6}>
+                    </Grid.Item>
+                    <Grid.Item col={12} />
+                    <Grid.Item col={6}>
                       <LabelField
                         values={values}
                         setFieldValue={setFieldValue}
                         errors={errors}
                         touched={touched}
                       />
-                    </GridItem>
-                    <GridItem col={12} />
+                    </Grid.Item>
+                    <Grid.Item col={12} />
 
                     {(values.contenttype !== '') && (
-                      <GridItem col={6}>
+                      <Grid.Item col={6}>
                         <PatternField
                           values={values}
                           uid={values.contenttype}
                           setFieldValue={setFieldValue}
+                          // @ts-ignore
                           error={
                             errors.pattern && touched.pattern
                               ? errors.pattern
                               : null
                           }
                         />
-                      </GridItem>
+                      </Grid.Item>
                     )}
                     <HiddenLocalizedField
+                      // @ts-ignore
                       localized={getSelectedContentType(values.contenttype)?.localized}
                       setFieldValue={setFieldValue}
                     />
                     {values.localized && (
-                      <GridItem col={12}>
-                        <GridItem col={6}>
+                      <Grid.Item col={12}>
+                        <Grid.Item col={6}>
                           <LanguageCheckboxes
                             onChange={(newLanguages) => setFieldValue('languages', newLanguages)}
                             selectedLanguages={values.languages}
@@ -243,14 +242,14 @@ const CreatePatternPage = () => {
                                 : null
                             }
                           />
-                        </GridItem>
-                      </GridItem>
+                        </Grid.Item>
+                      </Grid.Item>
                     )}
-                  </Grid>
-                </Stack>
+                  </Grid.Root>
+                </Flex>
               </Box>
-            </Stack>
-          </ContentLayout>
+            </Flex>
+          </Layouts.Content>
         </Form>
       )}
     </Formik>

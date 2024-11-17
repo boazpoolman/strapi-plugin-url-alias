@@ -9,7 +9,8 @@ export default ({ env }) => ({
         '..',
         // We need to go back once more to get out of the dist folder
         '..',
-        env("DATABASE_TEST_FILENAME", ".tmp/test.db")),
+        env("DATABASE_TEST_FILENAME", ".tmp/test.db"),
+      ),
     },
     useNullAsDefault: true,
     debug: false,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, Option } from '@strapi/design-system';
+import { SingleSelect, SingleSelectOption } from '@strapi/design-system';
 import { EnabledContentTypes } from '../../../../../types/enabled-contenttypes';
 
 type Props = {
@@ -16,13 +16,13 @@ const FilterInput = ({
   contentTypes,
 }: Props) => {
   return (
-    <Select key="type-filter" aria-label={label} onChange={(newValue) => onChange(String(newValue))} value={value}>
+    <SingleSelect key="type-filter" aria-label={label} onChange={(newValue) => onChange(String(newValue))} value={value}>
       {contentTypes.map((contentType) => (
-        <Option key={contentType.uid} value={contentType.uid}>
+        <SingleSelectOption key={contentType.uid} value={contentType.uid}>
           {contentType.name}
-        </Option>
+        </SingleSelectOption>
       ))}
-    </Select>
+    </SingleSelect>
   );
 };
 

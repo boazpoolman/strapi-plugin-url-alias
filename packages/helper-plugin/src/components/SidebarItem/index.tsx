@@ -4,8 +4,6 @@ import {
   Box,
   Divider,
   Typography,
-  Stack,
-  Icon,
   Flex,
 } from '@strapi/design-system';
 import { Play } from '@strapi/icons';
@@ -17,7 +15,6 @@ const EditView = ({
   const [opened, setOpened] = useState<boolean>(false);
   return (
     <Box
-      as="aside"
       aria-labelledby="webtools-sidebar-title"
       background="neutral0"
       borderColor="neutral150"
@@ -34,12 +31,11 @@ const EditView = ({
         >
           {label}
         </Typography>
-        <Icon
+        <Play
           width="0.5rem"
           height="0.5rem"
-          as={Play}
           transform={!opened ? 'rotate(90deg)' : 'rotate(-90deg)'}
-          marginLeft="auto"
+          style={{ marginLeft: 'auto' }}
         />
       </Flex>
       {opened && (
@@ -47,9 +43,9 @@ const EditView = ({
         <Box paddingTop={2} paddingBottom={6}>
           <Divider />
         </Box>
-        <Stack size={2}>
+        <Flex padding={2}>
           {children}
-        </Stack>
+        </Flex>
       </>
       )}
     </Box>

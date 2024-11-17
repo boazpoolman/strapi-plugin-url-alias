@@ -10,6 +10,7 @@ import {
   Box,
   TextButton,
   Typography,
+  Field,
 } from '@strapi/design-system';
 import { PatternFormValues } from '../../types/url-patterns';
 
@@ -40,20 +41,27 @@ const LabelField: FC<Props> = ({
 
   return (
     <Box>
-      <TextInput
-        name="label"
-        value={values.label || ''}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFieldValue('label', e.target.value)}
-        label={formatMessage({
-          id: 'webtools.settings.form.label.label',
-          defaultMessage: 'Label',
-        })}
+      <Field.Root
+        // @ts-ignore
         error={
           errors.label && touched.label
             ? formatMessage({ id: errors.label, defaultMessage: 'Invalid value' })
             : null
         }
-      />
+      >
+        <Field.Label>
+          {formatMessage({
+            id: 'webtools.settings.form.label.label',
+            defaultMessage: 'Label',
+          })}
+        </Field.Label>
+        <TextInput
+          name="label"
+          value={values.label || ''}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFieldValue('label', e.target.value)}
+        />
+        <Field.Error />
+      </Field.Root>
       {(generatedCode && !open) && (
         <Box style={{ display: 'flex', marginTop: 5 }}>
           <Typography>Machine name: {generatedCode}</Typography>
@@ -63,20 +71,27 @@ const LabelField: FC<Props> = ({
 
       {open && (
         <Box style={{ marginTop: 20 }}>
-          <TextInput
-            name="code"
-            value={values.code || generatedCode}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFieldValue('code', e.target.value)}
-            label={formatMessage({
-              id: 'global.sde',
-              defaultMessage: 'Code',
-            })}
+          <Field.Root
+            // @ts-ignore
             error={
               errors.code
                 ? formatMessage({ id: errors.code, defaultMessage: 'This value must be unique' })
                 : null
             }
-          />
+          >
+            <Field.Label>
+              {formatMessage({
+                id: 'global.sde',
+                defaultMessage: 'Code',
+              })}
+            </Field.Label>
+            <TextInput
+              name="code"
+              value={values.code || generatedCode}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFieldValue('code', e.target.value)}
+            />
+            <Field.Error />
+          </Field.Root>
         </Box>
       )}
     </Box>

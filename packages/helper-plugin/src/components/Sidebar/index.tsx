@@ -11,7 +11,6 @@ const Sidebar = ({
 }) => {
   return (
     <Box
-      as="aside"
       aria-labelledby="webtools-sidebar-title"
       background="neutral0"
       borderColor="neutral150"

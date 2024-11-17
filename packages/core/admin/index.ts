@@ -3,18 +3,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { AdminApp } from '@pluginpal/webtools-helper-plugin';
-import { prefixPluginTranslations } from '@strapi/helper-plugin';
 import * as yup from 'yup';
 import pluginPkg from '../package.json';
 import EditView from './components/EditView';
 import pluginId from './helpers/pluginId';
 import getTrad from './helpers/getTrad';
+import getTranslation from './helpers/getTranslation';
 import CheckboxConfirmation from './components/ContentManagerHooks/ConfirmationCheckbox';
 
-import dutchTranslations from './translations/nl.json';
-import englishTranslations from './translations/en.json';
-import spanishTranslations from './translations/es.json';
-import turkishTranslations from './translations/tr.json';
 import { PluginIcon } from './components/PluginIcon';
 
 const pluginDescription = pluginPkg.strapi.description || pluginPkg.description;
@@ -56,7 +52,7 @@ export default {
     });
   },
   bootstrap(app: AdminApp) {
-    app.injectContentManagerComponent('editView', 'right-links', {
+    app.getPlugin('content-manager')?.injectComponent('editView', 'right-links', {
       name: 'url-alias-edit-view',
       Component: EditView,
     });
@@ -94,24 +90,27 @@ export default {
       });
     }
   },
-  async registerTrads() {
-    return Promise.resolve([
-      {
-        data: prefixPluginTranslations(englishTranslations, pluginId),
-        locale: 'en',
-      },
-      {
-        data: prefixPluginTranslations(spanishTranslations, pluginId),
-        locale: 'es',
-      },
-      {
-        data: prefixPluginTranslations(dutchTranslations, pluginId),
-        locale: 'nl',
-      },
-      {
-        data: prefixPluginTranslations(turkishTranslations, pluginId),
-        locale: 'tr',
-      },
-    ]);
+  async registerTrads(app: any) {
+    const { locales } = app;
+
+    const importedTranslations = await Promise.all(
+      (locales as string[]).map((locale) => {
+        return import(`./translations/${locale}.json`)
+          .then(({ default: data }) => {
+            return {
+              data: getTranslation(data),
+              locale,
+            };
+          })
+          .catch(() => {
+            return {
+              data: {},
+              locale,
+            };
+          });
+      }),
+    );
+
+    return importedTranslations;
   },
 };

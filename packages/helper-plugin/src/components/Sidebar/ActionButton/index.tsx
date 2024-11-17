@@ -1,15 +1,14 @@
-import React from 'react';
+import React, { MouseEvent } from 'react';
 
 import {
   Typography,
-  Icon,
   Flex,
 } from '@strapi/design-system';
 import { Play } from '@strapi/icons';
 
 type Props = {
   label: string,
-  onClick: Function,
+  onClick?: (event: MouseEvent<Element>) => void,
   iconProps?: object
 };
 
@@ -33,11 +32,9 @@ const ActionButton: React.FC<Props> = ({
       >
         {label}
       </Typography>
-      <Icon
+      <Play
         width="0.5rem"
         height="0.5rem"
-        as={Play}
-        marginLeft="auto"
         {...iconProps}
       />
     </Flex>

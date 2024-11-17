@@ -39,6 +39,13 @@ module.exports = {
     }
   ],
   "rules": {
+    "import/no-unresolved": [2, {
+      "ignore": [
+        "@strapi/strapi/admin",
+        "@strapi/icons/symbols",
+        "@strapi/admin/strapi-admin"
+      ]
+    }],
     "import/prefer-default-export": "off",
     "arrow-body-style": "off",
     "@typescript-eslint/unbound-method": "off"

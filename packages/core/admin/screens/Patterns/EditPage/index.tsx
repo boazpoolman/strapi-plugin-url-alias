@@ -3,18 +3,15 @@ import { useIntl } from 'react-intl';
 import { Formik, Form, FormikProps } from 'formik';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import {
-  ContentLayout,
-  HeaderLayout,
   Box,
   Link,
   Button,
-  Stack,
+  Flex,
   Typography,
-  GridItem,
   Grid,
   Loader,
 } from '@strapi/design-system';
-import { useFetchClient, useNotification } from '@strapi/helper-plugin';
+import { useNotification, getFetchClient, Layouts } from '@strapi/strapi/admin';
 import { ArrowLeft, Check } from '@strapi/icons';
 import { ErrorResponse } from '../../../types/error-response';
 import schema from './utils/schema';
@@ -30,12 +27,12 @@ import LanguageCheckboxes from '../../../components/LanguageCheckboxes';
 
 const EditPatternPage = () => {
   const { push } = useHistory();
-  const toggleNotification = useNotification();
+  const { toggleNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const [patternEntity, setPatternEntity] = useState<null | PatternEntity>(null);
   const [contentTypes, setContentTypes] = useState<EnabledContentTypes>([]);
   const { formatMessage } = useIntl();
-  const { get, put, post } = useFetchClient();
+  const { get, put, post } = getFetchClient();
 
   const {
     params: { id },
@@ -43,7 +40,7 @@ const EditPatternPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    get<EnabledContentTypes>('/webtools/info/getContentTypes', { method: 'GET' })
+    get<EnabledContentTypes>('/webtools/info/getContentTypes')
       .then((res) => {
         const { data } = res;
         setContentTypes(data);
@@ -56,7 +53,7 @@ const EditPatternPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    get<PatternEntity>(`/webtools/url-pattern/findOne/${id}`, { method: 'GET' })
+    get<PatternEntity>(`/webtools/url-pattern/findOne/${id}`)
       .then((res) => {
         const { data } = res;
         setPatternEntity(data);
@@ -74,14 +71,14 @@ const EditPatternPage = () => {
   ) => {
     try {
       // Proceed to update the current pattern
-      await put(`/webtools/url-pattern/update/${patternEntity.id}`, {
+      await put(`/webtools/url-pattern/update/${patternEntity?.id}`, {
         data: values,
       });
 
       push(`/plugins/${pluginId}/patterns`);
       toggleNotification({
         type: 'success',
-        message: { id: 'webtools.settings.success.edit' },
+        message: formatMessage({ id: 'webtools.settings.success.edit' }),
       });
       setSubmitting(false);
     } catch (err) {
@@ -91,7 +88,7 @@ const EditPatternPage = () => {
       } else {
         toggleNotification({
           type: 'warning',
-          message: { id: 'notification.error' },
+          message: formatMessage({ id: 'notification.error' }),
         });
       }
       setSubmitting(false);
@@ -150,6 +147,7 @@ const EditPatternPage = () => {
         code: patternEntity.code,
         localized: false,
       }}
+      // @ts-ignore
       onSubmit={handleEditSubmit}
       validationSchema={schema}
       validate={validatePattern}
@@ -162,8 +160,8 @@ const EditPatternPage = () => {
         isSubmitting,
         setFieldValue,
       }) => (
-        <Form noValidate onSubmit={handleSubmit} placeholder={null}>
-          <HeaderLayout
+        <Form noValidate onSubmit={handleSubmit}>
+          <Layouts.Header
             title={formatMessage({
               id: 'webtools.settings.page.patterns.edit.title',
               defaultMessage: 'Edit pattern',
@@ -173,11 +171,10 @@ const EditPatternPage = () => {
               defaultMessage:
                 'Edit this pattern for automatic URL alias generation.',
             })}
-            as="h2"
             navigationAction={(
               <Link
                 startIcon={<ArrowLeft />}
-                to={`/plugins/${pluginId}/patterns`}
+                href={`/plugins/${pluginId}/patterns`}
               >
                 {formatMessage({
                   id: 'global.back',
@@ -198,8 +195,8 @@ const EditPatternPage = () => {
               </Button>
             )}
           />
-          <ContentLayout>
-            <Stack spacing={7}>
+          <Layouts.Content>
+            <Flex>
               <Box
                 background="neutral0"
                 hasRadius
@@ -209,15 +206,15 @@ const EditPatternPage = () => {
                 paddingLeft={7}
                 paddingRight={7}
               >
-                <Stack spacing={4}>
-                  <Typography variant="delta" as="h2">
+                <Flex>
+                  <Typography variant="delta">
                     {formatMessage({
                       id: 'webtools.settings.page.patterns.edit.subtitle',
                       defaultMessage: 'Pattern details',
                     })}
                   </Typography>
-                  <Grid gap={4}>
-                    <GridItem col={6}>
+                  <Grid.Root gap={4}>
+                    <Grid.Item col={6}>
                       <Select
                         name="contenttype"
                         list={contentTypes}
@@ -239,25 +236,26 @@ const EditPatternPage = () => {
                             : null
                         }
                       />
-                    </GridItem>
-                    <GridItem col={12} />
-                    <GridItem col={12} />
-                    <GridItem col={6}>
+                    </Grid.Item>
+                    <Grid.Item col={12} />
+                    <Grid.Item col={12} />
+                    <Grid.Item col={6}>
                       <LabelField
                         values={values}
                         setFieldValue={setFieldValue}
                         errors={errors}
                         touched={touched}
                       />
-                    </GridItem>
-                    <GridItem col={12} />
+                    </Grid.Item>
+                    <Grid.Item col={12} />
 
                     {values.contenttype !== '' && (
-                      <GridItem col={6}>
+                      <Grid.Item col={6}>
                         <PatternField
                           values={values}
                           uid={values.contenttype}
                           setFieldValue={setFieldValue}
+                          // @ts-ignore
                           error={
                               errors.pattern
                               && touched.pattern
@@ -266,15 +264,15 @@ const EditPatternPage = () => {
                                 : null
                             }
                         />
-                      </GridItem>
+                      </Grid.Item>
                     )}
                     <HiddenLocalizedField
                       localized={getSelectedContentType(values.contenttype)?.localized}
                       setFieldValue={setFieldValue}
                     />
                     {values.localized && (
-                      <GridItem col={12}>
-                        <GridItem col={6}>
+                      <Grid.Item col={12}>
+                        <Grid.Item col={6}>
                           <LanguageCheckboxes
                             onChange={(newLanguages) => setFieldValue('languages', newLanguages)}
                             selectedLanguages={values.languages}
@@ -284,14 +282,14 @@ const EditPatternPage = () => {
                                 : null
                             }
                           />
-                        </GridItem>
-                      </GridItem>
+                        </Grid.Item>
+                      </Grid.Item>
                     )}
-                  </Grid>
-                </Stack>
+                  </Grid.Root>
+                </Flex>
               </Box>
-            </Stack>
-          </ContentLayout>
+            </Flex>
+          </Layouts.Content>
         </Form>
       )}
     </Formik>
