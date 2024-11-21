@@ -1,5 +1,11 @@
 # addon-sitemap
 
+## 1.0.0-beta.11
+
+### Minor Changes
+
+- [#201](https://github.com/pluginpal/strapi-webtools/pull/201) [`e606992`](https://github.com/pluginpal/strapi-webtools/commit/e606992bb7f480bfba8527a51da93ce04a68a244) Thanks [@TMSchipper](https://github.com/TMSchipper)! - Fix strapi-plugin-sitemap cli commando
+
 ## 1.0.0-beta.10
 
 ### Patch Changes
